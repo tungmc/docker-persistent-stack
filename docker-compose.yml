@@ -1,0 +1,76 @@
+version: '2'
+
+services:
+    mongo:
+        container_name: mongo
+        image: mongo:latest
+        volumes:
+            - ./data/mongo:/data/db
+        user: "${UID_GID}"
+        ports:
+            - "27017:27017"
+        networks:
+            - common
+        restart: always    
+
+    mysql:
+        container_name: mysql
+        image: mysql:5.7
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        user: "${UID_GID}"
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: '123456'
+        networks:
+            - common
+        restart: always
+        
+    redis:
+        container_name: redis
+        image: redis:alpine
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes:
+            - ./data/redis:/data
+        user: "${UID_GID}"
+        ports:
+            - "6379:6379"
+        networks:
+            - common
+        restart: always
+        
+    zookeeper:
+        container_name: zookeeper
+        image: confluentinc/cp-zookeeper:5.4.0
+        restart: always
+        user: "${UID_GID}"
+        volumes:
+            - ./data/zookeeper:/var/lib/zookeeper/data
+        environment:
+            - ZOOKEEPER_CLIENT_PORT=2181
+        ports:
+            - 2181:2181
+        networks:
+            - common
+    kafka:
+        container_name: kafka
+        image: confluentinc/cp-kafka:5.4.0
+        restart: always
+        user: "${UID_GID}"
+        volumes:
+            - ./data/kafka:/var/lib/kafka/data
+        environment:
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+            - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092
+            - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+        ports:
+            - 9092:9092
+        depends_on:
+            - zookeeper
+        links:
+            - zookeeper
+        networks:
+            - common
+networks:
+    common:
