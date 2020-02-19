@@ -5,7 +5,7 @@ services:
         container_name: mongo
         image: mongo:latest
         volumes:
-            - ./data/mongo:/data/db
+            - /data/mongo:/data/db
         user: "${UID_GID}"
         ports:
             - "27017:27017"
@@ -17,7 +17,7 @@ services:
         container_name: mysql
         image: mysql:5.7
         volumes:
-            - ./data/mysql:/var/lib/mysql
+            - /data/mysql:/var/lib/mysql
         user: "${UID_GID}"
         ports:
             - "3306:3306"
@@ -44,7 +44,7 @@ services:
         container_name: rabbitmq
         image: rabbitmq:management-alpine
         volumes:
-            - ./data/rabbitmq:/var/lib/rabbitmq
+            - /data/rabbitmq:/var/lib/rabbitmq
         user: "${UID_GID}"
         ports:
             - "15672:15672"
@@ -70,7 +70,7 @@ services:
         restart: always
         user: "${UID_GID}"
         volumes:
-            - ./data/kafka:/var/lib/kafka/data
+            - /data/kafka:/var/lib/kafka/data
         environment:
           - KAFKA_BROKER_ID: 1
           - KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
