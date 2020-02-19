@@ -32,7 +32,7 @@ services:
         image: redis:alpine
         command: ["redis-server", "--appendonly", "yes"]
         volumes:
-            - ./data/redis:/data
+            - /data/redis:/data
         user: "${UID_GID}"
         ports:
             - "6379:6379"
